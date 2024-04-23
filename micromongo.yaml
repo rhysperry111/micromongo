@@ -1,0 +1,48 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: micromongo
+
+---
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: micromongo-deployment
+  namespace: micromongo
+  labels:
+    app: micromongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: micromongo
+  template:
+    metadata:
+      labels:
+        app: micromongo
+    spec:
+      containers:
+        - name: micromongo
+          image: rhysperry111/micromongo
+          env:
+          - name: HOST
+            value: <YOUR-MONGO-SERVICE.YOUR-MONGO-NAMESPACE.svc.cluster.local>
+          - name: USER
+            value: <YOUR-MONGO-USER>
+          - name: PASS
+            value: <YOUR-MONGO-PASSWORD>
+          - name: DATABASE
+            value: <YOUR-MONGO-DATABASE>
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: micromongo-service
+  namespace: micromongo
+spec:
+  selector:
+    app: micromongo
+  ports:
+    - port: 8000
